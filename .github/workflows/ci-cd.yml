@@ -28,7 +28,7 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Install dependencies
-        run:  mvn install:install-file -Dfile=lib/edf4j.jar -DgroupId=edf4j -DartifactId=edf4j -Dversion=1.0.0 -Dpackaging=jar
+        run:  mvn clean install
 
       - name: Run tests
         run: mvn test
