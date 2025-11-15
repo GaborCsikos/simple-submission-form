@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Feedback List</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: sans-serif; margin: 2rem; }
+        .controls { margin-bottom: 1rem; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 0.5rem; font-size: 0.9rem; }
+        th { background-color: #f5f5f5; }
+        th a { text-decoration: none; }
+    </style>
+</head>
+<body>
+<h1>Feedback submissions</h1>
+
+<div class="controls">
+    <form method="get" th:action="@{/admin/feedback}">
+        <label for="type">Filter by contact type:</label>
+
+        <select id="type" name="type">
+            <!-- Use null literal for unfiltered state (Thymeleaf 3.2 safe) -->
+            <option th:value="${null}" th:selected="${selectedType == null}">All</option>
+
+            <option th:each="ct : ${contactTypes}"
+                    th:value="${ct}"
+                    th:text="${ct.name().toLowerCase()}"
+                    th:selected="${selectedType == ct}">
+            </option>
+        </select>
+
+        <label for="sort">Sort by date:</label>
+        <select id="sort" name="sort">
+            <option th:value="'DESC'" th:selected="${sortDirection == 'DESC'}">
+                Newest first
+            </option>
+            <option th:value="'ASC'" th:selected="${sortDirection == 'ASC'}">
+                Oldest first
+            </option>
+        </select>
+
+        <button type="submit">Apply</button>
+    </form>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Date of submission</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Contact type</th>
+        <th>Message</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="f : ${feedbackList}">
+        <td th:text="${f.id}"></td>
+        <td th:text="${#temporals.format(f.submittedAt, 'yyyy-MM-dd HH:mm')}"></td>
+        <td th:text="${f.name}"></td>
+        <td th:text="${f.email}"></td>
+        <td th:text="${f.contactType.name().toLowerCase()}"></td>
+        <td th:text="${f.message}"></td>
+    </tr>
+
+    <tr th:if="${#lists.isEmpty(feedbackList)}">
+        <td colspan="6">No feedback found.</td>
+    </tr>
+    </tbody>
+</table>
+
+<p style="margin-top: 1rem;">
+    <a th:href="@{/}">Back to feedback form</a>
+</p>
+
+</body>
+</html>

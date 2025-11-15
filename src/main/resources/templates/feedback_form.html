@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Send Feedback</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: sans-serif; margin: 2rem; }
+        .container { max-width: 600px; margin: 0 auto; }
+        label { display: block; margin-top: 1rem; }
+        input[type="text"], textarea, select {
+            width: 100%; padding: 0.5rem; box-sizing: border-box;
+        }
+        .error { color: #b00020; font-size: 0.9rem; }
+        .success { background: #e0ffe0; padding: 0.75rem; margin-bottom: 1rem; border-radius: 4px; }
+        button { margin-top: 1rem; padding: 0.5rem 1rem; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Send us your feedback</h1>
+
+    <div th:if="${success}" class="success">
+        Thank you! Your feedback has been submitted.
+    </div>
+
+    <form th:action="@{/submit}" th:object="${feedbackForm}" method="post">
+
+        <label for="name">Name (optional)</label>
+        <input id="name" type="text" th:field="*{name}" maxlength="100"/>
+        <div class="error" th:if="${#fields.hasErrors('name')}"
+             th:errors="*{name}">Name error</div>
+
+        <label for="email">Email (optional)</label>
+        <input id="email" type="text" th:field="*{email}" maxlength="100"/>
+        <div class="error" th:if="${#fields.hasErrors('email')}"
+             th:errors="*{email}">Email error</div>
+
+        <label for="contactType">Contact type *</label>
+        <select id="contactType" th:field="*{contactType}">
+            <option th:value="${null}" disabled
+                    th:selected="${contactType == null}">Choose type</option>
+
+            <option th:each="ct : ${contactTypes}"
+                    th:value="${ct}"
+                    th:text="${ct.name().toLowerCase()}"></option>
+        </select>
+        <div class="error" th:if="${#fields.hasErrors('contactType')}"
+             th:errors="*{contactType}">Contact type error</div>
+
+        <label for="message">Message *</label>
+        <textarea id="message" th:field="*{message}" rows="6" maxlength="1000"></textarea>
+        <div class="error" th:if="${#fields.hasErrors('message')}"
+             th:errors="*{message}">Message error</div>
+
+        <button type="submit">Submit</button>
+    </form>
